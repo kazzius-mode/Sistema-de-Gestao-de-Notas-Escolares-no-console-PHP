@@ -476,7 +476,7 @@ function listarmelhoresestudantes($alunos){
         
     
         echo "=============================\n";
-        echo "MELHORES DOS MELHORES ALUNOS\n";
+        echo "MELHORES DOS MELHORES ALUNOS DA TURMA\n";
         echo "=============================\n";
         $temMaiorm = false;
         foreach ($alunos as $aluno) {
