@@ -40,7 +40,50 @@
 
 <?php
 
-// Função para registrar um estudante
+// ============================================
+// CONSTANTES - NOTAS
+// ============================================
+define('NOTA_MINIMA', 0);
+define('NOTA_MAXIMA', 20);
+define('MEDIA_DISPENSADO', 16);
+define('MEDIA_APROVADO', 10);
+
+
+// ============================================
+// FUNÇÃO ÚNICA PARA DETERMINAR ESTADO
+// Use esta em TODAS as funções que calculam estado
+// ===========================================
+function determinarestado($media)
+{
+    if ($media >= 'MEDIA_DISPENSADO') {
+        return "Dispensado";
+    } elseif ($media >= 'MEDIA_APROVADO') {
+        return "Aprovado";
+    } else {
+        return "Reprovado";
+    }
+}
+
+//===================================================
+//Função para validar nota (Redução de codigos duplicados relacionados a notas)
+//===================================================
+function validarnota($mensagem)
+{
+    echo $mensagem;
+    do {
+        $entrada = trim(fgets(STDIN));
+        if (!is_numeric($entrada) || $entrada < NOTA_MINIMA || $entrada > NOTA_MAXIMA) {
+            echo "[ERRO] Nota deve ser um número entre " . NOTA_MINIMA . " e " . NOTA_MAXIMA . ". Tente novamente: ";
+        }
+    } while (!is_numeric($entrada) || $entrada < NOTA_MINIMA || $entrada > NOTA_MAXIMA);
+    return (float)$entrada;
+}
+
+
+// ============================================
+// REGISTRAR ESTUDANTE (CORRIGIDO)
+// ============================================
+
 function registrarEstudante(&$alunos)
 {
     do {
@@ -50,46 +93,14 @@ function registrarEstudante(&$alunos)
         echo "Turma: ";
         $nome_turma = trim(fgets(STDIN));
 
-        echo "Nota 1: ";
-        do {
-            $entrada = trim(fgets(STDIN));
-            if (!is_numeric($entrada) || $entrada < 0 || $entrada > 20) {
-                echo "[ERRO] Nota deve ser um número entre 0 e 20. Tente novamente: ";
-            }
-        } while (!is_numeric($entrada) || $entrada < 0 || $entrada > 20);
-        $nota1 = (float)$entrada;
-
-        echo "Nota 2: ";
-        do {
-            $entrada = trim(fgets(STDIN));
-            if (!is_numeric($entrada) || $entrada < 0 || $entrada > 20) {
-                echo "[ERRO] Nota deve ser um número entre 0 e 20. Tente novamente: ";
-            }
-        } while (!is_numeric($entrada) || $entrada < 0 || $entrada > 20);
-        $nota2 = (float)$entrada;
-
-        echo "Nota 3: ";
-        do {
-            $entrada = trim(fgets(STDIN));
-            if (!is_numeric($entrada) || $entrada < 0 || $entrada > 20) {
-                echo "[ERRO] Nota deve ser um número entre 0 e 20. Tente novamente: ";
-            }
-        } while (!is_numeric($entrada) || $entrada < 0 || $entrada > 20);
-        $nota3 = (float)$entrada;
+       $nota1 = validarnota("Nota 1: ");
+       $nota2 = validarnota("Nota 2: ");
+       $nota3 = validarnota("Nota 3: ");
 
         $media = calcularMedia($nota1, $nota2, $nota3);
 
-
-        $media = calcularMedia($nota1, $nota2, $nota3);
-
-        if ($media >= 16) {
-            $estado = "Dispensado";
-        } else if ($media >= 10) {
-            $estado = "Aprovado";
-        } else {
-            $estado = "Reprovado";
-        }
-
+        $estado = determinarestado($media);
+        
         $alunos[] = [
             "Nome" => $nome,
             "Turma" => $nome_turma,
