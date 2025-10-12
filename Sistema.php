@@ -41,7 +41,8 @@
 <?php
 
 // Função para registrar um estudante
-function registrarEstudante(&$alunos) {
+function registrarEstudante(&$alunos)
+{
     do {
         echo "Nome Completo: ";
         $nome = trim(fgets(STDIN));
@@ -77,57 +78,59 @@ function registrarEstudante(&$alunos) {
         $nota3 = (float)$entrada;
 
         $media = calcularMedia($nota1, $nota2, $nota3);
-        // $estado = ($alunos['Media'] >= 10 && "Aprovado")||($alunos['Media'] < 10 && "Reprovado")||($alunos['Media'] >= 16 && "Dispensado");
-        // $estado = null;
 
-            $media = calcularMedia($nota1, $nota2, $nota3);
-            
-                    if ($media >= 16) {
-                    $estado = "Dispensado";
-                } else if ($media >= 10) {
-                    $estado = "Aprovado";
-                    } else {
-                        $estado = "Reprovado";
-                    }
 
-             $alunos[] = [
-                "Nome" => $nome,
-                "Turma" => $nome_turma,
-                "Nota 1" => $nota1,
-                "Nota 2" => $nota2,
-                "Nota 3" => $nota3,
-                "Media" => $media,
-                "Estado" => $estado
-            ];
-        
+        $media = calcularMedia($nota1, $nota2, $nota3);
+
+        if ($media >= 16) {
+            $estado = "Dispensado";
+        } else if ($media >= 10) {
+            $estado = "Aprovado";
+        } else {
+            $estado = "Reprovado";
+        }
+
+        $alunos[] = [
+            "Nome" => $nome,
+            "Turma" => $nome_turma,
+            "Nota 1" => $nota1,
+            "Nota 2" => $nota2,
+            "Nota 3" => $nota3,
+            "Media" => $media,
+            "Estado" => $estado
+        ];
+
         echo "Deseja registrar outro estudante? (S/N): ";
         $rep = strtoupper(trim(fgets(STDIN)));
     } while ($rep == "S");
 }
 
 // Função para calcular a média
-function calcularMedia($nota1, $nota2, $nota3) {
+function calcularMedia($nota1, $nota2, $nota3)
+{
     return round(($nota1 + $nota2 + $nota3) / 3, 1);
 }
 
 // Função para listar estudantes
-function listarEstudantes($alunos) {
+function listarEstudantes($alunos)
+{
     echo "===============================\n";
     echo "LISTA DOS ALUNOS\n";
     echo "===============================\n";
     foreach ($alunos as $aluno) {
-    echo "Nome do aluno: {$aluno['Nome']}\n";
-    echo "Nome da turma: {$aluno['Turma']}\n";
-    echo "Nota 1: {$aluno['Nota 1']}\n";
-    echo "Nota 2: {$aluno['Nota 2']}\n";
-    echo "Nota 3: {$aluno['Nota 3']}\n";
-    echo "Media Final: {$aluno['Media']}\n";
-    echo "Estado: {$aluno['Estado']}\n";
-    echo "==============================\n\n";
+        echo "Nome do aluno: {$aluno['Nome']}\n";
+        echo "Nome da turma: {$aluno['Turma']}\n";
+        echo "Nota 1: {$aluno['Nota 1']}\n";
+        echo "Nota 2: {$aluno['Nota 2']}\n";
+        echo "Nota 3: {$aluno['Nota 3']}\n";
+        echo "Media Final: {$aluno['Media']}\n";
+        echo "Estado: {$aluno['Estado']}\n";
+        echo "==============================\n\n";
     }
 }
 // Função para editar notas de um aluno existente
-function editarNotasAluno(&$alunos) {
+function editarNotasAluno(&$alunos)
+{
     if (count($alunos) > 0) {
         echo "Digite o nome do aluno para editar: ";
         $busca = strtolower(trim(fgets(STDIN)));
@@ -166,12 +169,12 @@ function editarNotasAluno(&$alunos) {
                 $aluno['Nota 2'] = $nota2;
                 $aluno['Nota 3'] = $nota3;
                 $aluno['Media'] = calcularMedia($nota1, $nota2, $nota3);
-                
+
                 if ($aluno['Media'] >= 16) {
-                   $aluno['Estado'] = "Dispensado";
-                    } else if ($aluno['Media'] >= 10) {
-                        $aluno['Estado'] = "Aprovado";
-                    } else {
+                    $aluno['Estado'] = "Dispensado";
+                } else if ($aluno['Media'] >= 10) {
+                    $aluno['Estado'] = "Aprovado";
+                } else {
                     $aluno['Estado'] = "Reprovado";
                 }
 
@@ -189,7 +192,8 @@ function editarNotasAluno(&$alunos) {
 }
 
 // Função para listar aprovados e reprovados
-function listarAprovadosReprovados($alunos) {
+function listarAprovadosReprovados($alunos)
+{
     if (count($alunos) > 0) {
         echo "--- APROVADOS ---\n";
         foreach ($alunos as $aluno) {
@@ -209,7 +213,8 @@ function listarAprovadosReprovados($alunos) {
 }
 
 // Função para salvar alunos em arquivo txt
-function salvarAlunosArquivo($alunos, $arquivo) {
+function salvarAlunosArquivo($alunos, $arquivo)
+{
     $dados = "";
     foreach ($alunos as $aluno) {
         $dados .= implode("|", $aluno) . "\n";
@@ -218,7 +223,8 @@ function salvarAlunosArquivo($alunos, $arquivo) {
 }
 
 // Função para carregar alunos de arquivo txt
-function carregarAlunosArquivo($arquivo) {
+function carregarAlunosArquivo($arquivo)
+{
     $alunos = [];
     if (file_exists($arquivo)) {
         $linhas = file($arquivo, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -237,18 +243,19 @@ function carregarAlunosArquivo($arquivo) {
             }
         }
     }
-    return $alunos; 
+    return $alunos;
 }
 
 //Lista dos Alunos Dispensados
-function listarDispensado($alunos) {
+function listarDispensado($alunos)
+{
     echo "=============================\n";
-    echo "ALUNOS DISPENSADOS (Média > 16)\n";
+    echo "ALUNOS DISPENSADOS (Média => 16)\n";
     echo "=============================\n";
     $temDispensado = false;
 
     foreach ($alunos as $aluno) {
-        if ($aluno['Media'] > 16) {
+        if ($aluno['Media'] >= 16) {
             echo "Nome: {$aluno['Nome']}\n";
             echo "Turma: {$aluno['Turma']}\n";
             echo "Média: {$aluno['Media']}\n";
@@ -263,37 +270,38 @@ function listarDispensado($alunos) {
 }
 
 //Lista de pessimos alunos
-function listarPessimosalunos($alunos){
-    if($alunos > 0){
+function listarPessimosalunos($alunos)
+{
+    if (count($alunos) > 0) {
         echo "=============================\n";
         echo "PESSIMOS ALUNOS (Média < 10)\n";
         echo "=============================\n";
         $temPessi = false;
 
-            foreach($alunos as $aluno){
-                if ($aluno["Media"] < 10) {
-                    echo "Nome: {$aluno['Nome']}\n";
-                    echo "Turma: {$aluno['Turma']}\n";
-                    echo "Media: {$aluno['Media']}\n";
-                    echo "Estado: {$aluno['Estado']}\n";
-                    echo "Situação: Pessima\n";
-                    echo "===============================\n\n";
-                    $temPessi = true;
-                }
+        foreach ($alunos as $aluno) {
+            if ($aluno["Media"] < 10) {
+                echo "Nome: {$aluno['Nome']}\n";
+                echo "Turma: {$aluno['Turma']}\n";
+                echo "Media: {$aluno['Media']}\n";
+                echo "Estado: {$aluno['Estado']}\n";
+                echo "Situação: Pessima\n";
+                echo "===============================\n\n";
+                $temPessi = true;
             }
+        }
 
-            if (!$temPessi){
-                echo "Nenhum estudante foi encontrado\n";
-            }
-
-        }else{
-            echo"Nenhum estudante cadastrado";
-        }   
+        if (!$temPessi) {
+            echo "Nenhum estudante foi encontrado\n";
+        }
+    } else {
+        echo "Nenhum estudante cadastrado";
+    }
 }
 
 
 
-function procurarEstudantePorNome($alunos) {
+function procurarEstudantePorNome($alunos)
+{
     if (count($alunos) > 0) {
         echo "Digite o nome do estudante para procurar: ";
         $busca = strtolower(trim(fgets(STDIN)));
@@ -320,14 +328,15 @@ function procurarEstudantePorNome($alunos) {
 }
 
 // Função para mostrar maior e menor nota
-function mostrarMaiorMenorNota($alunos) {
+function mostrarMaiorMenorNota($alunos)
+{
     if (count($alunos) > 0) {
         $maiornota = null;
         $menornota = null;
         $alunomaior = "";
         $alunomenor = "";
-        
-        foreach($alunos as $aluno){
+
+        foreach ($alunos as $aluno) {
             // Verifica o aluno com a maior nota e menor nota considerando todas as notas
             foreach (['Nota 1', 'Nota 2', 'Nota 3'] as $key) {
                 if ($maiornota === null || $aluno[$key] > $maiornota) {
@@ -347,32 +356,31 @@ function mostrarMaiorMenorNota($alunos) {
         echo "Nome do aluno: $alunomaior\n";
         echo "Nota do aluno: $maiornota\n";
         echo "=============================\n\n";
-        
+
         echo "=============================\n";
         echo "ALUNO COM MENOR NOTA\n";
         echo "=============================\n";
         echo "Nome do aluno: $alunomenor\n";
         echo "Nota do aluno: $menornota\n";
         echo "=============================\n\n";
-
-
-        
-        } else {
-      echo "Nenhuma nota cadastrada.\n";
+    } else {
+        echo "Nenhuma nota cadastrada.\n";
     }
 }
 
-function calcularmediageral($alunos){
-      if (count($alunos) > 0) {
-                $medias = array_column($alunos, 'Media');
-                $media_geral = round(array_sum($medias) / count($medias), 1);
-                echo "Média geral da turma: $media_geral\n";
-            } else {
-                echo "Nenhum estudante cadastrado.\n";
-            }
+function calcularmediageral($alunos)
+{
+    if (count($alunos) > 0) {
+        $medias = array_column($alunos, 'Media');
+        $media_geral = round(array_sum($medias) / count($medias), 1);
+        echo "Média geral da turma: $media_geral\n";
+    } else {
+        echo "Nenhum estudante cadastrado.\n";
+    }
 }
 
-function listarAlunosPorNota($alunos) {
+function listarAlunosPorNota($alunos)
+{
     if (count($alunos) > 0) {
         echo "=============================\n";
         echo "ALUNOS COM MEDIA MAIOR QUE 16\n";
@@ -387,7 +395,7 @@ function listarAlunosPorNota($alunos) {
                 $temMaior = true;
             }
         }
-        
+
         if (!$temMaior) {
             echo "Nenhum aluno com média maior que 16.\n";
         }
@@ -414,7 +422,8 @@ function listarAlunosPorNota($alunos) {
 }
 
 //Para apagar o aluno pelo nome.
-function apagarRegistroEstudante(&$alunos) {
+function apagarRegistroEstudante(&$alunos)
+{
     if (count($alunos) > 0) {
         echo "Digite o nome do estudante que deseja apagar: ";
         $busca = strtolower(trim(fgets(STDIN)));
@@ -448,39 +457,39 @@ function apagarRegistroEstudante(&$alunos) {
     }
 }
 
-function listarmelhoresestudantes($alunos){
-   if (count($alunos) > 0) {
-         $maiornotaa = null;
+function listarmelhoresestudantes($alunos)
+{
+    if (count($alunos) > 0) {
+        $maiornotaa = null;
         $menornotaa = null;
         $alunomaiorr = "";
         $alunomenorr = "";
-       
-       
-        foreach($alunos as $aluno){
+
+
+        foreach ($alunos as $aluno) {
             // Verifica o aluno com a maior nota e menor nota considerando todas as notas
             foreach (['Nota 1', 'Nota 2', 'Nota 3'] as $key) {
                 if ($maiornotaa === null || $aluno[$key] > $maiornotaa) {
                     $maiornotaa = $aluno[$key];
                     $alunomaiorr = $aluno['Nome'];
                 }
-              
             }
         }
-        
+
         echo "=============================\n";
         echo "ALUNO COM MAIOR NOTA\n";
         echo "=============================\n";
         echo "Nome do aluno: $alunomaiorr\n";
         echo "Nota do aluno: $maiornotaa\n";
         echo "=============================\n\n";
-        
-    
+
+
         echo "=============================\n";
-        echo "MELHORES DOS MELHORES ALUNOS DA TURMA\n";
+        echo "MELHORES DOS MELHORES ALUNOS\n";
         echo "=============================\n";
         $temMaiorm = false;
         foreach ($alunos as $aluno) {
-            if ($aluno['Media'] > 16) {
+            if ($aluno['Media'] > 18) {
                 echo "Nome: {$aluno['Nome']}\n";
                 echo "Turma: {$aluno['Turma']}\n";
                 echo "Nota 1: {$aluno['Nota 1']}\n";
@@ -492,16 +501,17 @@ function listarmelhoresestudantes($alunos){
                 $temMaiorm = true;
             }
         }
-        
+
         if (!$temMaiorm) {
             echo "Nenhum aluno com média maior que 18.\n";
         }
-         echo "=============================\n";
+
+        echo "=============================\n";
         echo "MELHORES ALUNOS\n";
         echo "=============================\n";
         $temMaior = false;
         foreach ($alunos as $aluno) {
-            if ($aluno['Media'] >= 14 && $aluno['Media'] <= 16) {
+            if ($aluno['Media'] >= 14 && $aluno['Media'] <= 18) {
                 echo "Nome: {$aluno['Nome']}\n";
                 echo "Turma: {$aluno['Turma']}\n";
                 echo "Nota 1: {$aluno['Nota 1']}\n";
@@ -513,16 +523,16 @@ function listarmelhoresestudantes($alunos){
                 $temMaior = true;
             }
         }
-        
+
         if (!$temMaior) {
             echo "Nenhum aluno com média maior que 16.\n";
         }
-         echo "=============================\n";
+        echo "=============================\n";
         echo "ALUNOS REGULAR\n";
         echo "=============================\n";
         $temMaiors = false;
         foreach ($alunos as $aluno) {
-            if ($aluno['Media'] >= 10 && $aluno['Media'] < 14 ) {
+            if ($aluno['Media'] >= 10 && $aluno['Media'] < 14) {
                 echo "Nome: {$aluno['Nome']}\n";
                 echo "Turma: {$aluno['Turma']}\n";
                 echo "Nota 1: {$aluno['Nota 1']}\n";
@@ -534,7 +544,7 @@ function listarmelhoresestudantes($alunos){
                 $temMaiors = true;
             }
         }
-        
+
         if (!$temMaiors) {
             echo "Nenhum aluno com média maior que 16.\n";
         }
@@ -550,7 +560,7 @@ function listarmelhoresestudantes($alunos){
                 echo "Nota 1: {$aluno['Nota 1']}\n";
                 echo "Nota 2: {$aluno['Nota 2']}\n";
                 echo "Nota 3: {$aluno['Nota 3']}\n";
-                echo"Media Final: {$aluno['Media']}\n";
+                echo "Media Final: {$aluno['Media']}\n";
                 echo "Estado: {$aluno['Estado']}\n";
                 echo "-----------------------------\n";
                 $temMenor = true;
@@ -558,8 +568,8 @@ function listarmelhoresestudantes($alunos){
         }
         if (!$temMenor) {
             echo "Nenhum Pior Aluno foi encontrado.\n";
-        }      
-        
+        }
+
         echo "\n=============================\n";
         echo "PIORES DOS PIORES ALUNOS\n";
         echo "=============================\n";
@@ -579,18 +589,17 @@ function listarmelhoresestudantes($alunos){
         }
         if (!$temMenora) {
             echo "Nenhum aluno que é Piores dos piores.\n";
-        }      
-
-        
-        } else {
-      echo "Nenhuma nota cadastrada.\n";
+        }
+    } else {
+        echo "Nenhuma nota cadastrada.\n";
     }
 }
 
 
 
 //Quantos estudantes existem.
-function contarAlunos($alunos){
+function contarAlunos($alunos)
+{
     $total = count($alunos);
     echo "O total de alunos cadastrados: $total\n";
 }
@@ -623,7 +632,7 @@ while (true) {
     // Recebe a opção do usuário e valida entrada
     $opcao = null;
     do {
-        echo "Escolher uma opção (0-12): ";
+        echo "Escolher uma opção (0-13): ";
         $input = trim(fgets(STDIN));
         if (is_numeric($input) && $input >= 0 && $input <= 13) {
             $opcao = (int)$input;
@@ -643,7 +652,7 @@ while (true) {
             break;
 
         case 3:
-         calcularmediageral($alunos);
+            calcularmediageral($alunos);
             break;
         case 4:
             procurarEstudantePorNome($alunos);
@@ -683,7 +692,7 @@ while (true) {
             salvarAlunosArquivo($alunos, $arquivo);
             echo "Saindo do Programa...\n";
             exit;
-        
+
         default:
             echo "Opção Invalida! Escolha a opção certa.\n";
             break;
