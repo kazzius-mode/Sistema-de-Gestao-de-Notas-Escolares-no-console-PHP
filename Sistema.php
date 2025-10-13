@@ -122,7 +122,45 @@ function calcularMedia($nota1, $nota2, $nota3)
     return round(($nota1 + $nota2 + $nota3) / 3, 1);
 }
 
-// Função para listar estudantes
+// Função para editar notas de um aluno existente
+function editarNotasAluno(&$alunos){
+    if (count($alunos)==0){
+       echo "Nenhum estudante foi cadastrado\n";
+       return; 
+    }
+
+    echo "Digite o nome do aluno para editar";
+    $busca = strtolower(trim(fgets(STDIN)));
+    $encontrado = false;
+
+    foreach ($alunos as $aluno) {
+        if (strpos(strtolower($aluno['Nome']), $busca) !== false){
+            echo "Aluno encontrado: {$aluno['Nome']}\n";
+
+            $nota1 = validarnota("Nova nota 1: ");
+            $nota2 = validarnota("Nova nota 2: ");
+            $nota3 = validarnota("Nova nota 3: ");
+
+            $aluno['Nota 1'] = $nota1;
+            $aluno['Nota 2'] = $nota1;
+            $aluno['Nota 3'] = $nota1;
+            $aluno['Media'] = calcularMedia($nota1, $nota2, $nota3);
+            $aluno['Estado'] = determinarestado($aluno['Media']);
+
+            echo "Notas atualizadas com sucesso!\n";
+            $encontrado = true;
+            break;
+        }
+    }
+
+    if (!$encontrado){
+        echo "Aluno não encotrado.\n";
+    }
+}
+
+//====================================================
+// LISTAR ALUNOS
+//====================================================
 function listarEstudantes($alunos)
 {
     echo "===============================\n";
@@ -137,68 +175,6 @@ function listarEstudantes($alunos)
         echo "Media Final: {$aluno['Media']}\n";
         echo "Estado: {$aluno['Estado']}\n";
         echo "==============================\n\n";
-    }
-}
-// Função para editar notas de um aluno existente
-function editarNotasAluno(&$alunos)
-{
-    if (count($alunos) > 0) {
-        echo "Digite o nome do aluno para editar: ";
-        $busca = strtolower(trim(fgets(STDIN)));
-        $encontrado = false;
-        foreach ($alunos as &$aluno) {
-            if (strpos(strtolower($aluno['Nome']), $busca) !== false) {
-                echo "Aluno encontrado: {$aluno['Nome']}\n";
-                echo "Nova Nota 1: ";
-                do {
-                    $entrada = trim(fgets(STDIN));
-                    if (!is_numeric($entrada) || $entrada < 0 || $entrada > 20) {
-                        echo "[ERRO] Nota deve ser um número entre 0 e 20. Tente novamente: ";
-                    }
-                } while (!is_numeric($entrada) || $entrada < 0 || $entrada > 20);
-                $nota1 = (float)$entrada;
-
-                echo "Nova Nota 2: ";
-                do {
-                    $entrada = trim(fgets(STDIN));
-                    if (!is_numeric($entrada) || $entrada < 0 || $entrada > 20) {
-                        echo "[ERRO] Nota deve ser um número entre 0 e 20. Tente novamente: ";
-                    }
-                } while (!is_numeric($entrada) || $entrada < 0 || $entrada > 20);
-                $nota2 = (float)$entrada;
-
-                echo "Nova Nota 3: ";
-                do {
-                    $entrada = trim(fgets(STDIN));
-                    if (!is_numeric($entrada) || $entrada < 0 || $entrada > 20) {
-                        echo "[ERRO] Nota deve ser um número entre 0 e 20. Tente novamente: ";
-                    }
-                } while (!is_numeric($entrada) || $entrada < 0 || $entrada > 20);
-                $nota3 = (float)$entrada;
-
-                $aluno['Nota 1'] = $nota1;
-                $aluno['Nota 2'] = $nota2;
-                $aluno['Nota 3'] = $nota3;
-                $aluno['Media'] = calcularMedia($nota1, $nota2, $nota3);
-
-                if ($aluno['Media'] >= 16) {
-                    $aluno['Estado'] = "Dispensado";
-                } else if ($aluno['Media'] >= 10) {
-                    $aluno['Estado'] = "Aprovado";
-                } else {
-                    $aluno['Estado'] = "Reprovado";
-                }
-
-                echo "Notas atualizadas com sucesso!\n";
-                $encontrado = true;
-                break;
-            }
-        }
-        if (!$encontrado) {
-            echo "Aluno não encontrado.\n";
-        }
-    } else {
-        echo "Nenhum estudante cadastrado.\n";
     }
 }
 
@@ -257,19 +233,27 @@ function carregarAlunosArquivo($arquivo)
     return $alunos;
 }
 
+//====================================================
 //Lista dos Alunos Dispensados
-function listarDispensado($alunos)
-{
+//====================================================
+
+function listarDispensado($alunos){
+    if(count($alunos) == 0){
+        echo "Nenhum estudante cadastrado";
+    }
     echo "=============================\n";
     echo "ALUNOS DISPENSADOS (Média => 16)\n";
     echo "=============================\n";
     $temDispensado = false;
 
     foreach ($alunos as $aluno) {
-        if ($aluno['Media'] >= 16) {
+        if ($aluno['Media'] >= MEDIA_DISPENSADO) {
             echo "Nome: {$aluno['Nome']}\n";
             echo "Turma: {$aluno['Turma']}\n";
-            echo "Média: {$aluno['Media']}\n";
+            echo "Nota 1: {$aluno['Nota 1']}\n";
+            echo "Nota 2: {$aluno['Nota 2']}\n";
+            echo "Média: {$aluno['Nota 3']}\n";
+            echo "Estado: {$aluno['Estado']}\n";
             echo "==================================\n";
             $temDispensado = true;
         }
