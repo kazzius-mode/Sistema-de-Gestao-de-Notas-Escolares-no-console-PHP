@@ -503,6 +503,7 @@ function listarmelhoresestudantes($alunos)
             echo "Nota 3: {$aluno['Nota 3']}\n";
             echo "Media: {$aluno['Media']}\n";
             echo "Estado: {$aluno['Estado']}\n";
+            echo "================================";
         }
     }
     if (!$temExcelente) {
