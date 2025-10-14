@@ -55,9 +55,9 @@ define('MEDIA_APROVADO', 10);
 // ===========================================
 function determinarestado($media)
 {
-    if ($media >= 'MEDIA_DISPENSADO') {
+    if ($media >= MEDIA_DISPENSADO) {
         return "Dispensado";
-    } elseif ($media >= 'MEDIA_APROVADO') {
+    } elseif ($media >= MEDIA_APROVADO) {
         return "Aprovado";
     } else {
         return "Reprovado";
@@ -93,14 +93,14 @@ function registrarEstudante(&$alunos)
         echo "Turma: ";
         $nome_turma = trim(fgets(STDIN));
 
-       $nota1 = validarnota("Nota 1: ");
-       $nota2 = validarnota("Nota 2: ");
-       $nota3 = validarnota("Nota 3: ");
+        $nota1 = validarnota("Nota 1: ");
+        $nota2 = validarnota("Nota 2: ");
+        $nota3 = validarnota("Nota 3: ");
 
         $media = calcularMedia($nota1, $nota2, $nota3);
 
         $estado = determinarestado($media);
-        
+
         $alunos[] = [
             "Nome" => $nome,
             "Turma" => $nome_turma,
@@ -123,18 +123,19 @@ function calcularMedia($nota1, $nota2, $nota3)
 }
 
 // Função para editar notas de um aluno existente
-function editarNotasAluno(&$alunos){
-    if (count($alunos)==0){
-       echo "Nenhum estudante foi cadastrado\n";
-       return; 
+function editarNotasAluno(&$alunos)
+{
+    if (count($alunos) == 0) {
+        echo "Nenhum estudante foi cadastrado\n";
+        return;
     }
 
-    echo "Digite o nome do aluno para editar";
+    echo "Digite o nome do aluno para editar: ";
     $busca = strtolower(trim(fgets(STDIN)));
     $encontrado = false;
 
     foreach ($alunos as $aluno) {
-        if (strpos(strtolower($aluno['Nome']), $busca) !== false){
+        if (strpos(strtolower($aluno['Nome']), $busca) !== false) {
             echo "Aluno encontrado: {$aluno['Nome']}\n";
 
             $nota1 = validarnota("Nova nota 1: ");
@@ -153,7 +154,7 @@ function editarNotasAluno(&$alunos){
         }
     }
 
-    if (!$encontrado){
+    if (!$encontrado) {
         echo "Aluno não encotrado.\n";
     }
 }
@@ -182,13 +183,20 @@ function listarEstudantes($alunos)
 function listarAprovadosReprovados($alunos)
 {
     if (count($alunos) > 0) {
-        echo "--- APROVADOS ---\n";
+        echo "=================================\n";
+        echo "APROVADOS\n";
+        echo "=================================\n";
+
         foreach ($alunos as $aluno) {
             if ($aluno['Estado'] === "Aprovado") {
                 echo "{$aluno['Nome']} | Média: {$aluno['Media']}\n\n";
             }
         }
-        echo "===== REPROVADOS =====\n";
+
+        echo "=================================\n";
+        echo " REPROVADOS\n";
+        echo "=================================\n";
+
         foreach ($alunos as $aluno) {
             if ($aluno['Estado'] === "Reprovado") {
                 echo "{$aluno['Nome']} | Média: {$aluno['Media']}\n";
@@ -237,8 +245,9 @@ function carregarAlunosArquivo($arquivo)
 //Lista dos Alunos Dispensados
 //====================================================
 
-function listarDispensado($alunos){
-    if(count($alunos) == 0){
+function listarDispensado($alunos)
+{
+    if (count($alunos) == 0) {
         echo "Nenhum estudante cadastrado";
     }
     echo "=============================\n";
@@ -454,139 +463,193 @@ function apagarRegistroEstudante(&$alunos)
 
 function listarmelhoresestudantes($alunos)
 {
-    if (count($alunos) > 0) {
-        $maiornotaa = null;
-        $menornotaa = null;
-        $alunomaiorr = "";
-        $alunomenorr = "";
+    if (count($alunos) == 0) {
+        echo "Nenhum aluno foi encontrado";
+        return;
+    }
 
-
-        foreach ($alunos as $aluno) {
-            // Verifica o aluno com a maior nota e menor nota considerando todas as notas
-            foreach (['Nota 1', 'Nota 2', 'Nota 3'] as $key) {
-                if ($maiornotaa === null || $aluno[$key] > $maiornotaa) {
-                    $maiornotaa = $aluno[$key];
-                    $alunomaiorr = $aluno['Nome'];
-                }
+    $maiornota = null;
+    $alunomaior = "";
+    foreach ($alunos as $aluno) {
+        foreach (['Nota 1', 'Nota 2', 'Nota 3'] as $key) {
+            if ($maiornota === null || $aluno[$key] > $maiornota) {
+                $maiornota = $aluno[$key];
+                $alunomaior = $aluno['Nome'];
             }
         }
+    }
 
-        echo "=============================\n";
-        echo "ALUNO COM MAIOR NOTA\n";
-        echo "=============================\n";
-        echo "Nome do aluno: $alunomaiorr\n";
-        echo "Nota do aluno: $maiornotaa\n";
-        echo "=============================\n\n";
+    echo "\n=================================\n";
+    echo "ALUNO COM MAIOR NOTA";
+    echo "=================================\n";
+    echo "Nome do aluno: $alunomaior\n";
+    echo "Nota do aluno: $maiornota\n";
+    echo "=================================\n";
 
+    //=====================================================
+    //      Alunos Excelentes (>= 18)
+    //=====================================================
 
-        echo "=============================\n";
-        echo "MELHORES DOS MELHORES ALUNOS\n";
-        echo "=============================\n";
-        $temMaiorm = false;
-        foreach ($alunos as $aluno) {
-            if ($aluno['Media'] > 18) {
-                echo "Nome: {$aluno['Nome']}\n";
-                echo "Turma: {$aluno['Turma']}\n";
-                echo "Nota 1: {$aluno['Nota 1']}\n";
-                echo "Nota 2: {$aluno['Nota 2']}\n";
-                echo "Nota 3: {$aluno['Nota 3']}\n";
-                echo "Média: {$aluno['Media']}\n";
-                echo "Estado: {$aluno['Estado']}\n";
-                echo "-----------------------------\n";
-                $temMaiorm = true;
-            }
+    echo "\n=================================\n";
+    echo "EXCELENTES\n";
+    echo "=================================\n";
+    $temExcelente = false;
+    foreach ($alunos as $aluno) {
+        if ($aluno['Media'] >= 18) {
+            echo "Nome: {$aluno['Nome']}\n";
+            echo "Turma: {$aluno['Turma']}\n";
+            echo "Nota 1: {$aluno['Nota 1']}\n";
+            echo "Nota 2: {$aluno['Nota 2']}\n";
+            echo "Nota 3: {$aluno['Nota 3']}\n";
+            echo "Media: {$aluno['Media']}\n";
+            echo "Estado: {$aluno['Estado']}\n";
         }
+    }
+    if (!$temExcelente) {
+        echo "Nenhum aluno nesta categoria\n";
+    }
 
-        if (!$temMaiorm) {
-            echo "Nenhum aluno com média maior que 18.\n";
-        }
+    //==============================================
+    //   Muito Bom (>= 16 e <18)
+    //==============================================
 
-        echo "=============================\n";
-        echo "MELHORES ALUNOS\n";
-        echo "=============================\n";
-        $temMaior = false;
-        foreach ($alunos as $aluno) {
-            if ($aluno['Media'] >= 14 && $aluno['Media'] <= 18) {
-                echo "Nome: {$aluno['Nome']}\n";
-                echo "Turma: {$aluno['Turma']}\n";
-                echo "Nota 1: {$aluno['Nota 1']}\n";
-                echo "Nota 2: {$aluno['Nota 2']}\n";
-                echo "Nota 3: {$aluno['Nota 3']}\n";
-                echo "Média: {$aluno['Media']}\n";
-                echo "Estado: {$aluno['Estado']}\n";
-                echo "-----------------------------\n";
-                $temMaior = true;
-            }
+    echo "\n=================================\n";
+    echo "MUITO BOM\n";
+    echo "=================================\n";
+    $temMuitoBom = false;
+    foreach ($alunos as $aluno) {
+        if ($aluno['Media'] >= 16 && $aluno['Media'] < 18) {
+            echo "Nome: {$aluno['Nome']}\n";
+            echo "Turma: {$aluno['Turma']}\n";
+            echo "Nota 1: {$aluno['Nota 1']}\n";
+            echo "Nota 2: {$aluno['Nota 2']}\n";
+            echo "Nota 3: {$aluno['Nota 3']}\n";
+            echo "Media: {$aluno['Media']}\n";
+            echo "Estado: {$aluno['Estado']}\n";
+            echo "===============================\n";
         }
+    }
+    if (!$temMuitoBom) {
+        echo "Nenhum aluno nesta categoria\n";
+    }
 
-        if (!$temMaior) {
-            echo "Nenhum aluno com média maior que 16.\n";
-        }
-        echo "=============================\n";
-        echo "ALUNOS REGULAR\n";
-        echo "=============================\n";
-        $temMaiors = false;
-        foreach ($alunos as $aluno) {
-            if ($aluno['Media'] >= 10 && $aluno['Media'] < 14) {
-                echo "Nome: {$aluno['Nome']}\n";
-                echo "Turma: {$aluno['Turma']}\n";
-                echo "Nota 1: {$aluno['Nota 1']}\n";
-                echo "Nota 2: {$aluno['Nota 2']}\n";
-                echo "Nota 3: {$aluno['Nota 3']}\n";
-                echo "Média: {$aluno['Media']}\n";
-                echo "Estado: {$aluno['Estado']}\n";
-                echo "-----------------------------\n";
-                $temMaiors = true;
-            }
-        }
+    //==============================================
+    //   Bom (>= 14 e <16)
+    //==============================================
 
-        if (!$temMaiors) {
-            echo "Nenhum aluno com média maior que 16.\n";
+    echo "\n=================================\n";
+    echo "BOM\n";
+    echo "=================================\n";
+    $temBom = false;
+    foreach ($alunos as $aluno) {
+        if ($aluno['Media'] >= 14 && $aluno['Media'] < 16) {
+            echo "Nome: {$aluno['Nome']}\n";
+            echo "Turma: {$aluno['Turma']}\n";
+            echo "Nota 1: {$aluno['Nota 1']}\n";
+            echo "Nota 2: {$aluno['Nota 2']}\n";
+            echo "Nota 3: {$aluno['Nota 3']}\n";
+            echo "Media: {$aluno['Media']}\n";
+            echo "Estado: {$aluno['Estado']}\n";
+            echo "===============================\n";
         }
+    }
+    if (!$temBom) {
+        echo "Nenhum aluno nesta categoria\n";
+    }
 
-        echo "\n=============================\n";
-        echo "PIORES ALUNOS\n";
-        echo "=============================\n";
-        $temMenor = false;
-        foreach ($alunos as $aluno) {
-            if ($aluno['Media'] > 3 && $aluno['Media'] < 9) {
-                echo "Nome: {$aluno['Nome']}\n";
-                echo "Turma: {$aluno['Turma']}\n";
-                echo "Nota 1: {$aluno['Nota 1']}\n";
-                echo "Nota 2: {$aluno['Nota 2']}\n";
-                echo "Nota 3: {$aluno['Nota 3']}\n";
-                echo "Media Final: {$aluno['Media']}\n";
-                echo "Estado: {$aluno['Estado']}\n";
-                echo "-----------------------------\n";
-                $temMenor = true;
-            }
+    //================================================
+    //REGULAR
+    //================================================
+    echo "\n=================================\n";
+    echo "REGULAR\n";
+    echo "=================================\n";
+    $temRegular = false;
+    foreach ($alunos as $aluno) {
+        if ($aluno['Media'] >= 10 && $aluno['Media'] < 14) {
+            echo "Nome: {$aluno['Nome']}\n";
+            echo "Turma: {$aluno['Turma']}\n";
+            echo "Nota 1: {$aluno['Nota 1']}\n";
+            echo "Nota 2: {$aluno['Nota 2']}\n";
+            echo "Nota 3: {$aluno['Nota 3']}\n";
+            echo "Media: {$aluno['Media']}\n";
+            echo "Estado: {$aluno['Estado']}\n";
+            echo "===============================\n";
         }
-        if (!$temMenor) {
-            echo "Nenhum Pior Aluno foi encontrado.\n";
-        }
+    }
+    if (!$temRegular) {
+        echo "Nenhum aluno nesta categoria\n";
+    }
 
-        echo "\n=============================\n";
-        echo "PIORES DOS PIORES ALUNOS\n";
-        echo "=============================\n";
-        $temMenora = false;
-        foreach ($alunos as $aluno) {
-            if ($aluno['Media'] <= 3) {
-                echo "Nome: {$aluno['Nome']}\n";
-                echo "Turma: {$aluno['Turma']}\n";
-                echo "Nota 1: {$aluno['Nota 1']}\n";
-                echo "Nota 2: {$aluno['Nota 2']}\n";
-                echo "Nota 3: {$aluno['Nota 3']}\n";
-                echo "Média: {$aluno['Media']}\n";
-                echo "Estado: {$aluno['Estado']}\n";
-                echo "-----------------------------\n";
-                $temMenora = true;
-            }
+    //==================================================
+    // FRACO
+    //==================================================
+
+    echo "\n=================================\n";
+    echo "FRACO\n";
+    echo "=================================\n";
+    $temFraco = false;
+    foreach ($alunos as $aluno) {
+        if ($aluno['Media'] >= 7 && $aluno['Media'] < 10) {
+            echo "Nome: {$aluno['Nome']}\n";
+            echo "Turma: {$aluno['Turma']}\n";
+            echo "Nota 1: {$aluno['Nota 1']}\n";
+            echo "Nota 2: {$aluno['Nota 2']}\n";
+            echo "Nota 3: {$aluno['Nota 3']}\n";
+            echo "Media: {$aluno['Media']}\n";
+            echo "Estado: {$aluno['Estado']}\n";
+            echo "===============================\n";
         }
-        if (!$temMenora) {
-            echo "Nenhum aluno que é Piores dos piores.\n";
+    }
+    if (!$temFraco) {
+        echo "Nenhum aluno nesta categoria\n";
+    }
+
+    //==================================================
+    // MUITO FRACO
+    //==================================================
+
+    echo "\n=================================\n";
+    echo "MUITO FRACO\n";
+    echo "=================================\n";
+    $temMuitoFraco = false;
+    foreach ($alunos as $aluno) {
+        if ($aluno['Media'] >= 4 && $aluno['Media'] < 7) {
+            echo "Nome: {$aluno['Nome']}\n";
+            echo "Turma: {$aluno['Turma']}\n";
+            echo "Nota 1: {$aluno['Nota 1']}\n";
+            echo "Nota 2: {$aluno['Nota 2']}\n";
+            echo "Nota 3: {$aluno['Nota 3']}\n";
+            echo "Media: {$aluno['Media']}\n";
+            echo "Estado: {$aluno['Estado']}\n";
+            echo "===============================\n";
         }
-    } else {
-        echo "Nenhuma nota cadastrada.\n";
+    }
+    if (!$temMuitoFraco) {
+        echo "Nenhum aluno nesta categoria\n";
+    }
+
+    //==================================================
+    // PESSIMO
+    //==================================================
+
+    echo "\n=================================\n";
+    echo "PESSIMO\n";
+    echo "=================================\n";
+    $temPessimo = false;
+    foreach ($alunos as $aluno) {
+        if ($aluno['Media'] < 4) {
+            echo "Nome: {$aluno['Nome']}\n";
+            echo "Turma: {$aluno['Turma']}\n";
+            echo "Nota 1: {$aluno['Nota 1']}\n";
+            echo "Nota 2: {$aluno['Nota 2']}\n";
+            echo "Nota 3: {$aluno['Nota 3']}\n";
+            echo "Media: {$aluno['Media']}\n";
+            echo "Estado: {$aluno['Estado']}\n";
+            echo "===============================\n";
+        }
+    }
+    if (!$temPessimo) {
+        echo "Nenhum aluno nesta categoria\n";
     }
 }
 
