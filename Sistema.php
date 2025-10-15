@@ -75,7 +75,7 @@ function validarnota($mensagem)
         if (!is_numeric($entrada) || $entrada < NOTA_MINIMA || $entrada > NOTA_MAXIMA) {
             echo "[ERRO] Nota deve ser um número entre " . NOTA_MINIMA . " e " . NOTA_MAXIMA . ". Tente novamente: ";
         }
-    } while (!is_numeric($entrada) || $entrada < NOTA_MINIMA || $entrada > NOTA_MAXIMA);
+    } while (!is_numeric($entrada) || $entrada < NOTA_MINIMA || $entrada > NOTA_MAXIMA && empty($entrada));
     return (float)$entrada;
 }
 
@@ -87,11 +87,21 @@ function validarnota($mensagem)
 function registrarEstudante(&$alunos)
 {
     do {
-        echo "Nome Completo: ";
-        $nome = trim(fgets(STDIN));
+        do {
+            echo "Nome Completo: ";
+            $nome = trim(fgets(STDIN));
+            if (empty($nome)) {
+                echo "[ERRO] Nome não pode estar vazio.\n";
+            }
+        } while (empty($nome));
 
-        echo "Turma: ";
-        $nome_turma = trim(fgets(STDIN));
+        do {
+            echo "Turma: ";
+            $nome_turma = trim(fgets(STDIN));
+            if (empty($nome_turma)) {
+                echo "[ERRO] Turma não pode estar vazio.\n";
+            }
+        } while (empty($nome_turma));
 
         $nota1 = validarnota("Nota 1: ");
         $nota2 = validarnota("Nota 2: ");
@@ -134,7 +144,7 @@ function editarNotasAluno(&$alunos)
     $busca = strtolower(trim(fgets(STDIN)));
     $encontrado = false;
 
-    foreach ($alunos as $aluno) {
+    foreach ($alunos as &$aluno) {
         if (strpos(strtolower($aluno['Nome']), $busca) !== false) {
             echo "Aluno encontrado: {$aluno['Nome']}\n";
 
@@ -143,8 +153,8 @@ function editarNotasAluno(&$alunos)
             $nota3 = validarnota("Nova nota 3: ");
 
             $aluno['Nota 1'] = $nota1;
-            $aluno['Nota 2'] = $nota1;
-            $aluno['Nota 3'] = $nota1;
+            $aluno['Nota 2'] = $nota2;
+            $aluno['Nota 3'] = $nota3;
             $aluno['Media'] = calcularMedia($nota1, $nota2, $nota3);
             $aluno['Estado'] = determinarestado($aluno['Media']);
 
@@ -249,6 +259,7 @@ function listarDispensado($alunos)
 {
     if (count($alunos) == 0) {
         echo "Nenhum estudante cadastrado";
+        return;
     }
     echo "=============================\n";
     echo "ALUNOS DISPENSADOS (Média => 16)\n";
@@ -261,7 +272,8 @@ function listarDispensado($alunos)
             echo "Turma: {$aluno['Turma']}\n";
             echo "Nota 1: {$aluno['Nota 1']}\n";
             echo "Nota 2: {$aluno['Nota 2']}\n";
-            echo "Média: {$aluno['Nota 3']}\n";
+            echo "Nota 3: {$aluno['Nota 3']}";
+            echo "Média: {$aluno['Media']}\n";
             echo "Estado: {$aluno['Estado']}\n";
             echo "==================================\n";
             $temDispensado = true;
@@ -387,11 +399,11 @@ function listarAlunosPorNota($alunos)
 {
     if (count($alunos) > 0) {
         echo "=============================\n";
-        echo "ALUNOS COM MEDIA MAIOR QUE 16\n";
+        echo "ALUNOS COM MEDIA MAIOR OU IGUAL A 16\n";
         echo "=============================\n";
         $temMaior = false;
         foreach ($alunos as $aluno) {
-            if ($aluno['Media'] > 16) {
+            if ($aluno['Media'] >= 16) {
                 echo "Nome: {$aluno['Nome']}\n";
                 echo "Turma: {$aluno['Turma']}\n";
                 echo "Média: {$aluno['Media']}\n";
@@ -401,15 +413,15 @@ function listarAlunosPorNota($alunos)
         }
 
         if (!$temMaior) {
-            echo "Nenhum aluno com média maior que 16.\n";
+            echo "Nenhum aluno com média maior ou igual a 16.\n";
         }
 
         echo "\n=============================\n";
-        echo "ALUNOS COM MEDIA MENOR OU IGUAL A 16\n";
+        echo "ALUNOS COM MEDIA MENOR 16\n";
         echo "=============================\n";
         $temMenor = false;
         foreach ($alunos as $aluno) {
-            if ($aluno['Media'] <= 16) {
+            if ($aluno['Media'] < 16) {
                 echo "Nome: {$aluno['Nome']}\n";
                 echo "Turma: {$aluno['Turma']}\n";
                 echo "Média: {$aluno['Media']}\n";
