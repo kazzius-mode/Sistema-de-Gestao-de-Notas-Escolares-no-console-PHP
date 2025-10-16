@@ -4,9 +4,7 @@
 ====================================================
     Sistema de Gestão de Notas
 ----------------------------------------------------
-    Autor: Imran Vali Jafar
-    Turma: TPW-5
-    Data: Outubro 2025
+    Autor: Kazzius_Mode
 ----------------------------------------------------
     Descrição:
     Sistema em PHP para registar, visualizar e analisar notas de estudantes.
