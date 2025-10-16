@@ -1,4 +1,4 @@
-# 🧮 Sistema de Gestão de Notas
+# 🧮 Sistema de Gestão de Notas (VSCODE TERMINAL)
 
 ## 📘 Descrição do Projeto
 O **Sistema de Gestão de Notas** é uma aplicação desenvolvida em **PHP para o console (terminal)** que permite o **registro, listagem e análise de notas de estudantes**.  
